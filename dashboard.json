@@ -1,0 +1,62 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Email Sync Backend Monitoring",
+    "tags": [],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "5s",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Heap Used Memory",
+        "targets": [
+          {
+            "expr": "node_memory_heap_used_bytes",
+            "legendFormat": "Heap Used",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Heap Total Memory",
+        "targets": [
+          {
+            "expr": "node_memory_heap_total_bytes",
+            "legendFormat": "Heap Total",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "RSS Memory (Total RAM Usage)",
+        "targets": [
+          {
+            "expr": "node_memory_rss_bytes",
+            "legendFormat": "RSS",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "CPU Usage %",
+        "targets": [
+          {
+            "expr": "node_cpu_percent",
+            "legendFormat": "CPU %",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      }
+    ]
+  },
+  "overwrite": true
+}

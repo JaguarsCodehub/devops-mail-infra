@@ -2,6 +2,9 @@ import Imap from 'imap';
 import { simpleParser, ParsedMail } from 'mailparser';
 import { MongoClient } from 'mongodb';
 import { Readable } from 'stream';
+import {updateSyncDuration} from '../metrics'
+
+const start = Date.now(); // Start timer
 
 // MongoDB Connection
 const mongo = new MongoClient(
@@ -14,6 +17,7 @@ export async function syncInbox(
   host: string,
   port: number
 ) {
+  console.time('Email Sync Timer'); // Start timer
   await mongo.connect();
   const db = mongo.db('emailSync');
   const collection = db.collection('emails');
@@ -49,6 +53,7 @@ export async function syncInbox(
         }
 
         const latestEmails = results.slice(-500);
+        let emailCount = 0;
 
         const fetch = imap.fetch(latestEmails, { bodies: '' });
 
@@ -68,6 +73,7 @@ export async function syncInbox(
                 subject: parsed.subject || '',
                 date: parsed.date || new Date(),
               });
+              emailCount++;
             } catch (error) {
               console.error('❌ Error parsing email:', error);
             }
@@ -75,7 +81,16 @@ export async function syncInbox(
         });
 
         fetch.once('end', () => {
-          console.log(`✅ Successfully fetched all latest ${latestEmails.length} emails.`);
+          console.log(
+            `✅ Successfully fetched all latest ${latestEmails.length} emails.`
+          );
+          console.log(`✅ Fetched ${emailCount} emails.`);
+
+          const end = Date.now();
+          const durationMs = end - start;
+
+          console.log(`✅ Fetched ${emailCount} emails in ${durationMs} ms.`);
+          updateSyncDuration(durationMs); // Push to Prometheus metric
           imap.end();
         });
       });
