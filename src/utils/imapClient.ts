@@ -4,7 +4,7 @@ import { MongoClient } from 'mongodb';
 import { Readable } from 'stream';
 import {updateSyncDuration} from '../metrics'
 
-const start = Date.now(); // Start timer
+const start = Date.now()
 
 // MongoDB Connection
 const mongo = new MongoClient(
@@ -85,12 +85,12 @@ export async function syncInbox(
             `✅ Successfully fetched all latest ${latestEmails.length} emails.`
           );
           console.log(`✅ Fetched ${emailCount} emails.`);
+          
+          const end = Date.now(); 
+        const durationMs = end - start;
 
-          const end = Date.now();
-          const durationMs = end - start;
-
-          console.log(`✅ Fetched ${emailCount} emails in ${durationMs} ms.`);
-          updateSyncDuration(durationMs); // Push to Prometheus metric
+        console.log(`✅ Fetched ${emailCount} emails in ${durationMs} ms.`);
+        updateSyncDuration(durationMs); // Push to Prometheus metric
           imap.end();
         });
       });
