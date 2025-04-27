@@ -1,14 +1,13 @@
 import Imap from 'imap';
 import { simpleParser, ParsedMail } from 'mailparser';
 import { MongoClient } from 'mongodb';
-import { Readable } from 'stream'; // important
+import { Readable } from 'stream';
 
 // MongoDB Connection
 const mongo = new MongoClient(
   process.env.MONGO_URI || 'mongodb://localhost:27017'
 );
 
-// Main function to sync inbox
 export async function syncInbox(
   email: string,
   password: string,
@@ -49,7 +48,7 @@ export async function syncInbox(
           return;
         }
 
-        const latestEmails = results.slice(-10); // Get latest 10 emails
+        const latestEmails = results.slice(-500);
 
         const fetch = imap.fetch(latestEmails, { bodies: '' });
 
@@ -76,7 +75,7 @@ export async function syncInbox(
         });
 
         fetch.once('end', () => {
-          console.log('✅ Successfully fetched all latest 10 emails.');
+          console.log(`✅ Successfully fetched all latest ${latestEmails.length} emails.`);
           imap.end();
         });
       });
