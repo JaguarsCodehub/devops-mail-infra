@@ -27,8 +27,8 @@ const worker = new Worker(
   'syncQueue',
   async (job) => {
     console.log(`📥 Processing sync job ID: ${job.id}`);
-    const { email, password, host, port } = job.data;
-    await syncInbox(email, password, host, port);
+    const { email, password, oauthToken } = job.data;
+    await syncInbox(email, password, oauthToken);
   },
   { connection }
 );
