@@ -22,6 +22,16 @@ const syncDurationSeconds = new client.Gauge({
   help: 'Time taken for last inbox sync (seconds)',
 });
 
+const syncEmailCount = new client.Gauge({
+  name: 'email_sync_count_total',
+  help: 'Total number of emails synced in last operation',
+});
+
+const syncEmailsPerSecond = new client.Gauge({
+  name: 'email_sync_rate_emails_per_second',
+  help: 'Email sync rate (emails per second)',
+});
+
 // CPU usages for my Endpoint
 const cpuUsagePercent = new client.Gauge({
   name: 'node_cpu_percent',
@@ -34,6 +44,8 @@ registerMetrics.registerMetric(memoryUsageHeapTotal);
 registerMetrics.registerMetric(memoryUsageHeapUsed);
 registerMetrics.registerMetric(cpuUsagePercent);
 registerMetrics.registerMetric(syncDurationSeconds);
+registerMetrics.registerMetric(syncEmailCount);
+registerMetrics.registerMetric(syncEmailsPerSecond);
 
 setInterval(() => {
   const memUsage = process.memoryUsage();
@@ -49,6 +61,12 @@ setInterval(() => {
   
 }, 5000);
 
-export function updateSyncDuration(durationMs: number) {
+export function updateSyncDuration(durationMs: number, emailCount?: number) {
   syncDurationSeconds.set(durationMs / 1000); // milliseconds → seconds
+  
+  if (emailCount !== undefined) {
+    syncEmailCount.set(emailCount);
+    const emailsPerSecond = emailCount / (durationMs / 1000);
+    syncEmailsPerSecond.set(emailsPerSecond);
+  }
 }

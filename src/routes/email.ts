@@ -6,9 +6,9 @@ import { syncQueue } from '../queue/syncQueue';
 export const emailRouter = Router();
 
 emailRouter.post('/sync-inbox', async (req, res) => {
-  const { email, password, oauthToken } = req.body;
+  const { email, password, oauthToken, host, port } = req.body;
   try {
-    await syncQueue.add('sync', { email, password, oauthToken });
+    await syncQueue.add('sync', { email, password, oauthToken, host, port });
     res.json({ message: 'Sync job added to queue' });
   } catch (err) {
     console.error('❌ Error adding sync job to queue:', err);
